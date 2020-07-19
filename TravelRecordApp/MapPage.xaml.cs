@@ -51,5 +51,3 @@ namespace TravelRecordApp
         }
     }
 }
-
-// Lecture 62
