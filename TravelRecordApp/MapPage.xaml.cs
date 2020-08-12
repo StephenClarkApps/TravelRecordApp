@@ -1,4 +1,6 @@
 ﻿using System;
+using Plugin.Geolocator;
+using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
 using Xamarin.Essentials;
@@ -11,6 +13,8 @@ namespace TravelRecordApp
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MapPage : ContentPage
     {
+        private bool hasLocationPermission = false;
+
         public MapPage()
         {
             InitializeComponent();
@@ -37,7 +41,10 @@ namespace TravelRecordApp
 
                 if (status == PermissionStatus.Granted)
                 {
+                    hasLocationPermission = true;
                     locationsMaps.IsShowingUser = true;
+
+                    GetLocation();
                 }
                 else
                 {
@@ -48,6 +55,50 @@ namespace TravelRecordApp
             {
                 await DisplayAlert("Error", ex.Message, "Ok");
             }
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (hasLocationPermission)
+            {
+                var locator = CrossGeolocator.Current;
+                locator.PositionChanged += Locator_PositionChanged;
+                await locator.StartListeningAsync(TimeSpan.Zero, 100);
+            }
+
+            GetLocation();
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            CrossGeolocator.Current.StopListeningAsync();
+            CrossGeolocator.Current.PositionChanged -= Locator_PositionChanged;
+        }
+
+        private void Locator_PositionChanged(object sender, Plugin.Geolocator.Abstractions.PositionEventArgs e)
+        {
+            MoveMap(e.Position);
+        }
+
+        private async void GetLocation()
+        {
+            if (hasLocationPermission)
+            {
+                var locator = CrossGeolocator.Current;
+                var position = await locator.GetPositionAsync();
+                MoveMap(position);
+ 
+            }
+        }
+
+        private void MoveMap(Position position)
+        {
+            var center = new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude);
+            var span = new Xamarin.Forms.Maps.MapSpan(center, 1, 1);
+            locationsMaps.MoveToRegion(span);
         }
     }
 }
