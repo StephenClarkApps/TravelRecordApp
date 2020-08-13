@@ -3,10 +3,8 @@ using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using PermissionStatus = Plugin.Permissions.Abstractions.PermissionStatus;
 
 namespace TravelRecordApp
 {
@@ -32,8 +30,8 @@ namespace TravelRecordApp
                     if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(Permission.LocationWhenInUse))
                     {
                         await DisplayAlert("Need your location", "We need to access your location", "Ok");
-
                     }
+
                     var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.LocationWhenInUse);
                     if (results.ContainsKey(Permission.LocationWhenInUse))
                         status = results[Permission.LocationWhenInUse];
@@ -42,13 +40,13 @@ namespace TravelRecordApp
                 if (status == PermissionStatus.Granted)
                 {
                     hasLocationPermission = true;
-                    locationsMaps.IsShowingUser = true;
+                    locationsMap.IsShowingUser = true;
 
                     GetLocation();
                 }
                 else
                 {
-                    await DisplayAlert("Location denied", "You didn't give us permission to access location", "Ok");
+                    await DisplayAlert("Location denied", "You didn't give us permission to access location, so we can't show you where you are", "Ok");
                 }
             }
             catch (Exception ex)
@@ -64,6 +62,7 @@ namespace TravelRecordApp
             if (hasLocationPermission)
             {
                 var locator = CrossGeolocator.Current;
+
                 locator.PositionChanged += Locator_PositionChanged;
                 await locator.StartListeningAsync(TimeSpan.Zero, 100);
             }
@@ -74,11 +73,12 @@ namespace TravelRecordApp
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
+
             CrossGeolocator.Current.StopListeningAsync();
             CrossGeolocator.Current.PositionChanged -= Locator_PositionChanged;
         }
 
-        private void Locator_PositionChanged(object sender, Plugin.Geolocator.Abstractions.PositionEventArgs e)
+        void Locator_PositionChanged(object sender, Plugin.Geolocator.Abstractions.PositionEventArgs e)
         {
             MoveMap(e.Position);
         }
@@ -89,8 +89,8 @@ namespace TravelRecordApp
             {
                 var locator = CrossGeolocator.Current;
                 var position = await locator.GetPositionAsync();
+
                 MoveMap(position);
- 
             }
         }
 
@@ -98,7 +98,7 @@ namespace TravelRecordApp
         {
             var center = new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude);
             var span = new Xamarin.Forms.Maps.MapSpan(center, 1, 1);
-            locationsMaps.MoveToRegion(span);
+            locationsMap.MoveToRegion(span);
         }
     }
 }
