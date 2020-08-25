@@ -61,15 +61,10 @@ namespace TravelRecordApp
 
             if (hasLocationPermission)
             {
-                //var locator = CrossGeolocator.Current;
-
-                //locator.PositionChanged += Locator_PositionChanged;
-                //await locator.StartListeningAsync(TimeSpan.Zero, 100);
-
                 if (CrossGeolocator.IsSupported && CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled)
                 {
                     CrossGeolocator.Current.PositionChanged += Locator_PositionChanged;
-                    await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(1), 10);
+                    await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(0), 100);
                 }
             }
 
