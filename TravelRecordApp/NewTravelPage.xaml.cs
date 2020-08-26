@@ -1,4 +1,6 @@
-﻿using Plugin.Geolocator;
+﻿using System;
+using System.Linq;
+using Plugin.Geolocator;
 using SQLite;
 using TravelRecordApp.Logic;
 using TravelRecordApp.Model;
@@ -27,21 +29,42 @@ namespace TravelRecordApp
 
         void ToolbarItem_Clicked(System.Object sender, System.EventArgs e)
         {
-            Post post = new Post()
+            try
             {
-                Experience = experienceEntry.Text
-            };
+                var selectedVenue = venueListView.SelectedItem as Venue;
+                var firstCategory = selectedVenue.categories.FirstOrDefault();
+                Post post = new Post()
+                {
+                    Experience = experienceEntry.Text,
+                    CategoryId = firstCategory.id,
+                    CategoryName = firstCategory.name,
+                    Address = selectedVenue.location.address,
+                    Distance = selectedVenue.location.distance,
+                    Latitude = selectedVenue.location.lat,
+                    Logitude = selectedVenue.location.lng,
+                    VenueName = selectedVenue.name
+                };
 
-            using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
-            {
-                conn.CreateTable<Post>();
-                int rows = conn.Insert(post);
+                using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
+                {
+                    conn.CreateTable<Post>();
+                    int rows = conn.Insert(post);
 
-                if (rows > 0)
-                    DisplayAlert("Success", "Experience successfully inserted", "Ok");
-                else
-                    DisplayAlert("Failure", "Experience failed to be inserted", "OK");
+                    if (rows > 0)
+                        DisplayAlert("Success", "Experience successfully inserted", "Ok");
+                    else
+                        DisplayAlert("Failure", "Experience failed to be inserted", "OK");
+                }
             }
+            catch(NullReferenceException nre)
+            {
+
+            }
+            catch(Exception ex)
+            {
+
+            }
+
         }
     }
 }
