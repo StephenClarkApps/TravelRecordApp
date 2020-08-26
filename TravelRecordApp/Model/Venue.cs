@@ -4,7 +4,8 @@ using TravelRecordApp.Helpers;
 
 namespace TravelRecordApp.Model
 {
-
+    // We use just a subset of the json with the stuff we
+    // want to work with to build these classes.
     public class Location
     {
         public string address { get; set; }
