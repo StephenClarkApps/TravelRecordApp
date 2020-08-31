@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using SQLite;
+using TravelRecordApp.Model;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -63,12 +66,40 @@ namespace TravelRecordApp
             {
                 if (CrossGeolocator.IsSupported && CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled)
                 {
-                    CrossGeolocator.Current.PositionChanged += Locator_PositionChanged;
-                    await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(0), 100);
+                    //CrossGeolocator.Current.PositionChanged += Locator_PositionChanged;
+                    //await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(0), 100);
+                    var locator = CrossGeolocator.Current;
+                    locator.PositionChanged += Locator_PositionChanged;
+                    await locator.StartListeningAsync(TimeSpan.FromSeconds(0), 100);
+
+                    var position = await locator.GetPositionAsync();
+
+                    var center = new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude);
+                    var span = new Xamarin.Forms.Maps.MapSpan(center, 2, 2);
+
+                    locationsMap.MoveToRegion(span);
+
+                    using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
+                    {
+                        conn.CreateTable<Post>();
+                        var posts = conn.Table<Post>().ToList();
+
+                        DisplayInMap(posts);
+                    }
+
+
                 }
             }
 
-            GetLocation();
+            //GetLocation();
+        }
+
+        private void DisplayInMap(List<Post> posts)
+        {
+            foreach(var post in posts)
+            {
+                 
+            }
         }
 
         protected override void OnDisappearing()
