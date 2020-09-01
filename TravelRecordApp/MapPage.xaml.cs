@@ -114,12 +114,12 @@ namespace TravelRecordApp
             }
         }
 
-        protected override void OnDisappearing()
+        protected override async void OnDisappearing()
         {
             base.OnDisappearing();
-            //var locator = CrossGeolocator.Current;
-            locator.StopListeningAsync();
             locator.PositionChanged -= Locator_PositionChanged;
+            await locator.StopListeningAsync();
+
         }
 
         void Locator_PositionChanged(object sender, Plugin.Geolocator.Abstractions.PositionEventArgs e)
