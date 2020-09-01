@@ -7,6 +7,7 @@ using Plugin.Permissions.Abstractions;
 using SQLite;
 using TravelRecordApp.Model;
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
 
 namespace TravelRecordApp
@@ -14,6 +15,8 @@ namespace TravelRecordApp
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MapPage : ContentPage
     {
+        IGeolocator locator = CrossGeolocator.Current;
+
         private bool hasLocationPermission = false;
 
         public MapPage()
@@ -66,18 +69,16 @@ namespace TravelRecordApp
             {
                 if (CrossGeolocator.IsSupported && CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled)
                 {
-                    //CrossGeolocator.Current.PositionChanged += Locator_PositionChanged;
-                    //await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(0), 100);
-                    var locator = CrossGeolocator.Current;
                     locator.PositionChanged += Locator_PositionChanged;
-                    await locator.StartListeningAsync(TimeSpan.FromSeconds(0), 100);
+                    await locator.StartListeningAsync(TimeSpan.FromSeconds(0), 50, true);
 
                     var position = await locator.GetPositionAsync();
 
                     var center = new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude);
                     var span = new Xamarin.Forms.Maps.MapSpan(center, 2, 2);
 
-                    locationsMap.MoveToRegion(span);
+                    locationsMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude),
+                                 Distance.FromMiles(1)));
 
                     using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
                     {
@@ -86,12 +87,8 @@ namespace TravelRecordApp
 
                         DisplayInMap(posts);
                     }
-
-
                 }
             }
-
-            //GetLocation();
         }
 
         private void DisplayInMap(List<Post> posts)
@@ -120,9 +117,9 @@ namespace TravelRecordApp
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-
-            CrossGeolocator.Current.StopListeningAsync();
-            CrossGeolocator.Current.PositionChanged -= Locator_PositionChanged;
+            //var locator = CrossGeolocator.Current;
+            locator.StopListeningAsync();
+            locator.PositionChanged -= Locator_PositionChanged;
         }
 
         void Locator_PositionChanged(object sender, Plugin.Geolocator.Abstractions.PositionEventArgs e)
@@ -134,17 +131,16 @@ namespace TravelRecordApp
         {
             if (hasLocationPermission)
             {
-                var locator = CrossGeolocator.Current;
                 var position = await locator.GetPositionAsync();
-
                 MoveMap(position);
             }
         }
 
-        private void MoveMap(Position position)
+        private void MoveMap(Plugin.Geolocator.Abstractions.Position position)
         {
-            var center = new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude);
-            var span = new Xamarin.Forms.Maps.MapSpan(center, 1, 1);
+            var span = (MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude),
+                                 Distance.FromMiles(1)));
+
             locationsMap.MoveToRegion(span);
         }
     }
