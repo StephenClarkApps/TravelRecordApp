@@ -149,4 +149,21 @@
       <Name>TravelRecordApp</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\user%403x.png" />
+    <BundleResource Include="Resources\user%402x.png" />
+    <BundleResource Include="Resources\user.png" />
+    <BundleResource Include="Resources\map%403x.png" />
+    <BundleResource Include="Resources\map%402x.png" />
+    <BundleResource Include="Resources\map.png" />
+    <BundleResource Include="Resources\home%403x.png" />
+    <BundleResource Include="Resources\home%402x.png" />
+    <BundleResource Include="Resources\home.png" />
+    <BundleResource Include="Resources\save%403x.png" />
+    <BundleResource Include="Resources\save%402x.png" />
+    <BundleResource Include="Resources\save.png" />
+    <BundleResource Include="Resources\add%403x.png" />
+    <BundleResource Include="Resources\add%402x.png" />
+    <BundleResource Include="Resources\add.png" />
+  </ItemGroup>
 </Project>
