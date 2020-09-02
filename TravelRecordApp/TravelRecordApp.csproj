@@ -24,10 +24,18 @@
     <Folder Include="Model\" />
     <Folder Include="Helpers\" />
     <Folder Include="Logic\" />
+    <Folder Include="Assets\" />
+    <Folder Include="Assets\Images\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Mono.Android">
       <HintPath>..\..\..\..\..\Library\Frameworks\Xamarin.Android.framework\Versions\10.3.1.4\lib\xamarin.android\xbuild-frameworks\MonoAndroid\v9.0\Mono.Android.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Assets\Images\plane.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Images\plane.png" />
   </ItemGroup>
 </Project>
