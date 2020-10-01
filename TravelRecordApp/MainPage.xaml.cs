@@ -22,14 +22,20 @@ namespace TravelRecordApp
             bool isEmailEmpty = string.IsNullOrEmpty(emailEntry.Text);
             bool isPasswordEmpty = string.IsNullOrEmpty(passwordEntry.Text);
 
-            if (isEmailEmpty|| isPasswordEmpty)
+            if (!isEmailEmpty && !isPasswordEmpty)
             {
+                Navigation.PushAsync(new HomePage());
 
             }
             else
             {
-                Navigation.PushAsync(new HomePage());
+                // Somit missing
             }
+        }
+
+        void RegisterUserButton_Clicked(System.Object sender, System.EventArgs e)
+        {
+            Navigation.PushAsync(new RegisterPage());
         }
     }
 }
