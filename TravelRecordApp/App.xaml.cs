@@ -7,7 +7,10 @@ namespace TravelRecordApp
     {
         public static string DatabaseLocation = string.Empty;
 
-        public static MobileServiceClient client = new MobileServiceClient("https://travelrecordappxamy.azurewebsites.net");
+        public static MobileServiceClient MobileService =
+            new MobileServiceClient(
+                "https://travelrecordappxamy.azurewebsites.net"
+        );
 
         public App()
         {

@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using TravelRecordApp.Model;
+using Xamarin.Forms;
 
 namespace TravelRecordApp
 {
@@ -9,11 +10,19 @@ namespace TravelRecordApp
             InitializeComponent();
         }
 
-        void RegisterButton_Clicked(System.Object sender, System.EventArgs e)
+        private async void RegisterButton_Clicked(System.Object sender, System.EventArgs e)
         {
             if (passwordEntry.Text == confirmPasswordEntry.Text)
             {
                 // We register the user
+                Users user = new Users()
+                {
+                    Email = emailEntry.Text,
+                    Password = passwordEntry.Text
+                };
+
+                await App.MobileService.GetTable<Users>().InsertAsync(user);
+
             }
             else
             {
