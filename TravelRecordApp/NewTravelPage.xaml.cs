@@ -27,7 +27,7 @@ namespace TravelRecordApp
             venueListView.ItemsSource = venues;
         }
 
-        void ToolbarItem_Clicked(System.Object sender, System.EventArgs e)
+        async void ToolbarItem_Clicked(System.Object sender, System.EventArgs e)
         {
             try
             {
@@ -41,28 +41,33 @@ namespace TravelRecordApp
                     Address = selectedVenue.location.address,
                     Distance = selectedVenue.location.distance,
                     Latitude = selectedVenue.location.lat,
-                    Logitude = selectedVenue.location.lng,
-                    VenueName = selectedVenue.name
+                    Longitude = selectedVenue.location.lng,
+                    VenueName = selectedVenue.name,
+                    UserId = App.user.Id
                 };
 
-                using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
-                {
-                    conn.CreateTable<Post>();
-                    int rows = conn.Insert(post);
+                //using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
+                //{
+                //    conn.CreateTable<Post>();
+                //    int rows = conn.Insert(post);
 
-                    if (rows > 0)
-                        DisplayAlert("Success", "Experience successfully inserted", "Ok");
-                    else
-                        DisplayAlert("Failure", "Experience failed to be inserted", "OK");
-                }
+                //    if (rows > 0)
+                //        DisplayAlert("Success", "Experience successfully inserted", "Ok");
+                //    else
+                //        DisplayAlert("Failure", "Experience failed to be inserted", "OK");
+                //}
+
+                await App.MobileService.GetTable<Post>().InsertAsync(post);
+                await DisplayAlert("Success", "Experience successfully inserted", "Ok");
+
             }
             catch(NullReferenceException nre)
             {
-
+                await DisplayAlert("Failure", "Experience failed to be inserted", "OK");
             }
             catch(Exception ex)
             {
-
+                await DisplayAlert("Failure", "Experience failed to be inserted", "OK");
             }
 
         }

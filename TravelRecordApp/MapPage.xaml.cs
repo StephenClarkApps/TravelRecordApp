@@ -97,7 +97,7 @@ namespace TravelRecordApp
             {
                 try
                 {
-                    var position = new Xamarin.Forms.Maps.Position(post.Latitude, post.Logitude);
+                    var position = new Xamarin.Forms.Maps.Position(post.Latitude, post.Longitude);
 
                     var pin = new Xamarin.Forms.Maps.Pin()
                     {

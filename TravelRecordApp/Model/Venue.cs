@@ -48,9 +48,9 @@ namespace TravelRecordApp.Model
     {
         public Response response { get; set; }
 
-        public static string GenerateURL(double latitude, double logitude)
+        public static string GenerateURL(double latitude, double longitude)
         {
-            return string.Format(Constants.VENUE_SEARCH, latitude, logitude, Constants.CLIENT_ID, Constants.CLIENT_SECRET, DateTime.Now.ToString("yyyyMMdd"));
+            return string.Format(Constants.VENUE_SEARCH, latitude, longitude, Constants.CLIENT_ID, Constants.CLIENT_SECRET, DateTime.Now.ToString("yyyyMMdd"));
         }
     }
 }
