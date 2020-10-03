@@ -12,6 +12,7 @@ namespace TravelRecordApp
             new MobileServiceClient(
                 "https://travelrecordappxamy.azurewebsites.net"
         );
+
         public static Users user = new Users();
 
         public App()

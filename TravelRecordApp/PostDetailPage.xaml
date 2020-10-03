@@ -2,11 +2,35 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="TravelRecordApp.PostDetailPage">
     <StackLayout>
         <Entry x:Name="experienceEntry"/>
-        <Button Text="Update"
+        <Label x:Name="venueLabel"
+               Margin="15,15,0,0"
+               FontAttributes="Bold"
+               FontSize="22"
+               Text="Some fancy coworking"/>
+        <Label x:Name="categoryLabel"
+               Margin="15,15,0,0"
+               Text="Coworking space"
+               TextColor="{StaticResource blueColor}"/>
+        <Label x:Name="addressLabel"
+               Margin="15,15,0,0"
+               Text="1234 Main Street, New York, NY"
+               FontSize="15"/>
+        <Label x:Name="coordinatesLabel"
+               Margin="15,15,0,0"
+               Text="123.12, 123.34"
+               FontSize="15"/>
+        <Label x:Name="distanceLabel"
+               Margin="15,15,0,0"
+               Text="123 m"
+               FontSize="15"/>
+
+
+
+        <!--<Button Text="Update"
                 x:Name="updateButton"
                 Clicked="updateButton_Clicked"/>
         <Button Text="Delete"
                 x:Name="deleteButton"
-                Clicked="deleteButton_Clicked"/>
+                Clicked="deleteButton_Clicked"/>-->
     </StackLayout>
 </ContentPage>
