@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using SQLite;
+using TravelRecordApp.Model;
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
 
 namespace TravelRecordApp
@@ -11,6 +15,8 @@ namespace TravelRecordApp
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MapPage : ContentPage
     {
+        IGeolocator locator = CrossGeolocator.Current;
+
         private bool hasLocationPermission = false;
 
         public MapPage()
@@ -63,20 +69,62 @@ namespace TravelRecordApp
             {
                 if (CrossGeolocator.IsSupported && CrossGeolocator.Current.IsGeolocationAvailable && CrossGeolocator.Current.IsGeolocationEnabled)
                 {
-                    CrossGeolocator.Current.PositionChanged += Locator_PositionChanged;
-                    await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(0), 100);
+                    locator.PositionChanged += Locator_PositionChanged;
+                    await locator.StartListeningAsync(TimeSpan.FromSeconds(0), 50, true);
+
+                    var position = await locator.GetPositionAsync();
+
+                    var center = new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude);
+                    var span = new Xamarin.Forms.Maps.MapSpan(center, 2, 2);
+
+                    locationsMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude),
+                                 Distance.FromMiles(1)));
+
+                    //using (SQLiteConnection conn = new SQLiteConnection(App.DatabaseLocation))
+                    //{
+                    //    conn.CreateTable<Post>();
+                    //    var posts = conn.Table<Post>().ToList();
+
+                    //    DisplayInMap(posts);
+                    //}
+
+                    var posts = await App.MobileService.GetTable<Post>().Where(p => p.UserId == App.user.Id).ToListAsync();
+                    DisplayInMap(posts);
+
+
                 }
             }
-
-            GetLocation();
         }
 
-        protected override void OnDisappearing()
+        private void DisplayInMap(List<Post> posts)
+        {
+            foreach(var post in posts)
+            {
+                try
+                {
+                    var position = new Xamarin.Forms.Maps.Position(post.Latitude, post.Longitude);
+
+                    var pin = new Xamarin.Forms.Maps.Pin()
+                    {
+                        Type = Xamarin.Forms.Maps.PinType.SavedPin,
+                        Position = position,
+                        Label = post.VenueName,
+                        Address = post.Address
+                    };
+
+                    locationsMap.Pins.Add(pin);
+                }
+                catch (NullReferenceException nre) { }
+                catch (Exception ex) { }
+            }
+        }
+
+        protected override async void OnDisappearing()
         {
             base.OnDisappearing();
+            locator.PositionChanged -= Locator_PositionChanged;
+            await locator.StopListeningAsync();
 
-            CrossGeolocator.Current.StopListeningAsync();
-            CrossGeolocator.Current.PositionChanged -= Locator_PositionChanged;
         }
 
         void Locator_PositionChanged(object sender, Plugin.Geolocator.Abstractions.PositionEventArgs e)
@@ -88,17 +136,16 @@ namespace TravelRecordApp
         {
             if (hasLocationPermission)
             {
-                var locator = CrossGeolocator.Current;
                 var position = await locator.GetPositionAsync();
-
                 MoveMap(position);
             }
         }
 
-        private void MoveMap(Position position)
+        private void MoveMap(Plugin.Geolocator.Abstractions.Position position)
         {
-            var center = new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude);
-            var span = new Xamarin.Forms.Maps.MapSpan(center, 1, 1);
+            var span = (MapSpan.FromCenterAndRadius(new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude),
+                                 Distance.FromMiles(1)));
+
             locationsMap.MoveToRegion(span);
         }
     }
