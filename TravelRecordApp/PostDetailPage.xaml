@@ -25,12 +25,12 @@
                FontSize="15"/>
 
 
-
-        <!--<Button Text="Update"
+        <Button Text="Update"
                 x:Name="updateButton"
                 Clicked="updateButton_Clicked"/>
         <Button Text="Delete"
+                TextColor="Red"
                 x:Name="deleteButton"
-                Clicked="deleteButton_Clicked"/>-->
+                Clicked="deleteButton_Clicked"/>
     </StackLayout>
 </ContentPage>
