@@ -21,7 +21,7 @@ namespace TravelRecordApp
                     Password = passwordEntry.Text
                 };
 
-                await App.MobileService.GetTable<Users>().InsertAsync(user);
+                Users.Register(user);
 
             }
             else

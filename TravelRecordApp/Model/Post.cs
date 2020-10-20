@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 using SQLite;
 
 namespace TravelRecordApp.Model
@@ -32,5 +35,36 @@ namespace TravelRecordApp.Model
         {
             await App.MobileService.GetTable<Post>().InsertAsync(post);
         }
+
+        public static async Task<List<Post>> Read()
+        {
+            var posts = await App.MobileService.GetTable<Post>().Where(p => p.UserId == App.user.Id).ToListAsync();
+            return posts;
+        }
+
+        public static Dictionary<string, int> PostCategories(List<Post> posts)
+        {
+            var categories = (from p in posts
+                              orderby p.CategoryId
+                              select p.CategoryName).Distinct().ToList();
+
+            //var categories2 = postTable.OrderBy(p => p.CategoryId).Select(p => p.CategoryName).Distinct().ToList();
+
+            Dictionary<string, int> categoriesCount = new Dictionary<string, int>();
+
+            foreach (var category in categories)
+            {
+                var count = (from post in posts
+                             where post.CategoryName == category
+                             select post).ToList().Count;
+
+                //var count2 = postTable.Where(p => p.CategoryName == category).ToList().Count;
+
+                categoriesCount.Add(category, count);
+            }
+
+            return categoriesCount;
+        }
+
     }
 }
