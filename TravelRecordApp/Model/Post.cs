@@ -27,5 +27,10 @@ namespace TravelRecordApp.Model
         public int Distance { get; set; }
 
         public string UserId { get; set; }
+
+        public static async void Insert(Post post)
+        {
+            await App.MobileService.GetTable<Post>().InsertAsync(post);
+        }
     }
 }
